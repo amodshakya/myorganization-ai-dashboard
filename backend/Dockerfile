@@ -1,0 +1,26 @@
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+RUN npm run build
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache tini
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+
+RUN mkdir -p logs
+
+EXPOSE 3001
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "dist/server.js"]
