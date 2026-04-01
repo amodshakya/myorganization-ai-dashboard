@@ -1,0 +1,1 @@
+{"version":3,"file":"generation.js","sourceRoot":"","sources":["../../../src/api/routes/generation.ts"],"names":[],"mappings":";;AAAA,qCAAiC;AACjC,8EAAiG;AACjG,yDAA0E;AAE1E,MAAM,MAAM,GAAG,IAAA,gBAAM,GAAE,CAAC;AAExB,MAAM,CAAC,GAAG,CAAC,UAAU,EAAE,2CAAoB,CAAC,CAAC;AAC7C,MAAM,CAAC,GAAG,CAAC,UAAU,EAAE,IAAA,0BAAa,EAAC,4BAAe,CAAC,EAAE,2CAAoB,CAAC,CAAC;AAE7E,kBAAe,MAAM,CAAC"}
