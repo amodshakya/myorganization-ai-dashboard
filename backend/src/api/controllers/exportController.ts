@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Op } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import { Parser } from 'json2csv';
 import PDFDocument from 'pdfkit';
 import moment from 'moment';
@@ -14,9 +14,9 @@ export async function exportCSV(req: Request, res: Response, next: NextFunction)
     const where: Record<string, unknown> = {};
     if (source) where['source'] = source;
     if (startDate || endDate) {
-      const range: Record<string, Date> = {};
-      if (startDate) range[Op.gte as unknown as string] = new Date(startDate);
-      if (endDate) range[Op.lte as unknown as string] = new Date(endDate);
+      const range: Record<symbol, Date> = {};
+      if (startDate) range[Op.gte] = new Date(startDate);
+      if (endDate) range[Op.lte] = new Date(endDate);
       where['timestamp'] = range;
     }
 
@@ -50,7 +50,7 @@ export async function exportPDF(req: Request, res: Response, next: NextFunction)
     const capacityRows = await RenewableCapacity.findAll({
       attributes: [
         'source_type',
-        [require('sequelize').fn('SUM', require('sequelize').col('capacity_mw')), 'total_mw'],
+        [fn('SUM', col('capacity_mw')), 'total_mw'],
       ],
       group: ['source_type'],
       raw: true,
@@ -59,7 +59,7 @@ export async function exportPDF(req: Request, res: Response, next: NextFunction)
     const genRows = await RenewableGeneration.findAll({
       attributes: [
         'source',
-        [require('sequelize').fn('AVG', require('sequelize').col('value_mw')), 'avg_mw'],
+        [fn('AVG', col('value_mw')), 'avg_mw'],
       ],
       group: ['source'],
       raw: true,
