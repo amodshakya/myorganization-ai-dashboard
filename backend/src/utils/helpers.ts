@@ -87,8 +87,10 @@ export function addHours(date: Date, hours: number): Date {
 export function getCurrentISTHour(): number {
   const now = new Date();
   const utcHour = now.getUTCHours();
-  const istHour = (utcHour + 5) % 24 + (now.getUTCMinutes() >= 30 ? 1 : 0);
-  return istHour % 24;
+  const utcMinutes = now.getUTCMinutes();
+  // IST = UTC+5:30; fold the 30-minute carry into the total before applying modulo
+  const istHour = (utcHour + 5 + Math.floor((utcMinutes + 30) / 60)) % 24;
+  return istHour;
 }
 
 /**

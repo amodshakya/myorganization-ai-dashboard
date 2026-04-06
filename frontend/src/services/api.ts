@@ -196,7 +196,7 @@ export async function getDataSourceStatus(): Promise<DataSourceStatus[]> {
 
 export async function exportCSV(): Promise<Blob> {
   try {
-    const response = await apiClient.get('/export/csv', { responseType: 'blob' });
+    const response = await apiClient.get('/export/report', { responseType: 'blob' });
     return response.data as Blob;
   } catch {
     // Return a minimal CSV as fallback

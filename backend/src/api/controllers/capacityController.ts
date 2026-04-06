@@ -73,7 +73,7 @@ export async function getCapacityByType(req: Request, res: Response, next: NextF
       source_type: r.source_type,
       total_capacity_mw: parseFloat(parseFloat(r.total_capacity_mw).toFixed(2)),
       total_capacity_gw: parseFloat((parseFloat(r.total_capacity_mw) / 1000).toFixed(2)),
-      state_count: parseInt(r.state_count, 10),
+      states_count: parseInt(r.state_count, 10),
       percentage: parseFloat(((parseFloat(r.total_capacity_mw) / totalMW) * 100).toFixed(2)),
     })).sort((a, b) => b.total_capacity_mw - a.total_capacity_mw);
 

@@ -35,7 +35,6 @@ export const Dashboard: React.FC = () => {
   const loadAllData = React.useCallback(() => {
     dispatch(fetchDashboardSummary());
     dispatch(fetchCurrentGeneration());
-    dispatch(fetchGenerationHistory(dateRange));
     dispatch(fetchCapacityByState());
     dispatch(fetchCapacityByType());
 
@@ -43,6 +42,11 @@ export const Dashboard: React.FC = () => {
     getCarbonMetrics()
       .then(setCarbonMetrics)
       .finally(() => setCarbonLoading(false));
+  }, [dispatch]);
+
+  // Fetch generation history whenever the date range changes (also fires on initial mount)
+  useEffect(() => {
+    dispatch(fetchGenerationHistory(dateRange));
   }, [dispatch, dateRange]);
 
   // Initial load
