@@ -15,7 +15,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { RootState, AppDispatch } from '../../store';
-import { fetchGenerationHistory } from '../../store/slices/generationSlice';
 import { setDateRange } from '../../store/slices/filterSlice';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import { format } from 'date-fns';
@@ -52,8 +51,8 @@ export const GenerationTrendChart: React.FC = () => {
   const currentPeriod = useSelector((state: RootState) => state.filters.dateRange);
 
   const handlePeriodChange = (period: '24h' | '7d' | '30d') => {
+    // Only update the filter; Dashboard's dateRange effect will re-fetch history
     dispatch(setDateRange(period));
-    dispatch(fetchGenerationHistory(period));
   };
 
   const maxPoints = currentPeriod === '30d' ? 60 : currentPeriod === '7d' ? 84 : 24;

@@ -177,25 +177,48 @@ export async function fetchGenerationData(): Promise<GenerationData[]> {
 async function updateDataSourceStatus(count: number): Promise<void> {
   const now = new Date();
   const nextUpdate = new Date(now.getTime() + 60 * 60 * 1000); // +1h
-  await DataSource.upsert({
-    id: uuidv4(),
-    name: DATA_SOURCE,
-    last_updated: now,
-    status: 'active',
-    next_update: nextUpdate,
-    records_count: count,
-    error_message: undefined,
+  const [instance, created] = await DataSource.findOrCreate({
+    where: { name: DATA_SOURCE },
+    defaults: {
+      id: uuidv4(),
+      name: DATA_SOURCE,
+      last_updated: now,
+      status: 'active',
+      next_update: nextUpdate,
+      records_count: count,
+    },
   });
+  if (!created) {
+    await instance.update({
+      last_updated: now,
+      status: 'active',
+      next_update: nextUpdate,
+      records_count: count,
+      error_message: undefined,
+    });
+  }
 }
 
 async function setDataSourceError(message: string): Promise<void> {
-  await DataSource.upsert({
-    id: uuidv4(),
-    name: DATA_SOURCE,
-    last_updated: new Date(),
-    status: 'error',
-    next_update: null,
-    records_count: 0,
-    error_message: message,
+  const [instance, created] = await DataSource.findOrCreate({
+    where: { name: DATA_SOURCE },
+    defaults: {
+      id: uuidv4(),
+      name: DATA_SOURCE,
+      last_updated: new Date(),
+      status: 'error',
+      next_update: null,
+      records_count: 0,
+      error_message: message,
+    },
   });
+  if (!created) {
+    await instance.update({
+      last_updated: new Date(),
+      status: 'error',
+      next_update: null,
+      records_count: 0,
+      error_message: message,
+    });
+  }
 }

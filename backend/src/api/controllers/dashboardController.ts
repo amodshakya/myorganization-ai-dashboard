@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { fn, col, literal } from 'sequelize';
+import { fn, col, Op } from 'sequelize';
 import { RenewableCapacity, RenewableGeneration, DataSource } from '../../models';
 import { DashboardSummary, ApiResponse } from '../../types';
 import { redisService } from '../../services/caching/redisService';
@@ -28,13 +28,15 @@ export async function getSummary(req: Request, res: Response, next: NextFunction
     }) as unknown as Array<{ total: string }>;
     const totalCapacityMW = parseFloat(capacityResult[0]?.total ?? '0');
 
-    // Latest generation per source
+    // Latest generation per source – limit to the last 2 hours to get near-real-time values
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
     const genRows = await RenewableGeneration.findAll({
       attributes: [
         'source',
         [fn('MAX', col('timestamp')), 'latest_ts'],
         [fn('AVG', col('value_mw')), 'avg_mw'],
       ],
+      where: { timestamp: { [Op.gte]: twoHoursAgo } },
       group: ['source'],
       raw: true,
     }) as unknown as Array<{ source: string; avg_mw: string }>;
